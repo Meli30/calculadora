@@ -3,18 +3,41 @@ const buttons = document.querySelectorAll('button');
 
 buttons.forEach(button => {
     button.addEventListener('click', () => {
+        const value = button.textContent;
+
         if (button.id === '=') {
             try {
-                display.value = eval(display.value); // Evalúa la operación matemática
+                let expression = display.value.replace(/÷/g, "/").replace(/×/g, "*"); // Reemplaza '÷' por '/' y '×' por '*'
+                const result = new Function(`return ${expression}`)();
+                
+                display.value = result === Infinity || isNaN(result) ? 'Error' : result;
             } catch {
-                display.value = 'Error'; // En caso de error, muestra "Error"
+                display.value = 'Error';
             }
-        } else if (button.id === 'C') {
-            display.value = ''; // Borra todo el contenido
-        } else if (button.id === 'CE') {
-            display.value = display.value.slice(0, -1); // Borra un solo carácter
-        } else {
-            display.value += button.textContent; // Agrega el contenido del botón al display
+        } 
+        // Borra todo el contenido
+        else if (button.id === 'C') {
+            display.value = ''; 
+        } 
+        // Borra un solo carácter
+        else if (button.id === 'CE') {
+            display.value = display.value.slice(0, -1); 
+        } 
+        // Aplicar porcentaje a toda la expresión
+        else if (button.id === '%') {
+            try {
+                let expression = display.value.replace(/÷/g, "/").replace(/×/g, "*"); 
+                let result = eval(expression) / 100;
+                display.value = isNaN(result) ? 'Error' : result;
+            } catch {
+                display.value = 'Error';
+            }
+        } 
+        else {
+            // Evita operadores duplicados seguidos (ej. `++`, `**`, `//`, `××`, `÷÷`)
+            if (/[\+\-\*\/×÷]$/.test(display.value + value)) return;
+
+            display.value += value;
         }
     });
 });
