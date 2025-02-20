@@ -35,7 +35,7 @@ buttons.forEach(button => {
         } 
         else {
             // Evita operadores duplicados seguidos (ej. `++`, `**`, `//`, `××`, `÷÷`)
-            if (/[\+\-\*\/×÷]$/.test(display.value + value)) return;
+            if (/[\+\-\*\/×÷]$/.test(display.value) && /[\+\-\*\/×÷]/.test(value)) return;
 
             display.value += value;
         }
